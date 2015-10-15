@@ -17,14 +17,18 @@ void *timerFunc(void *arg) {
 /* This is our thread function.  It is like main(), but for a thread */
 void *threadFunc(void *arg)
 {
-	int threadNum = 0;
+	int threadNum = *(int*)arg;
 	int i = 0;
-	int tab = 0;
+	char whitespace[80];
 
-	threadNum = *(int*)arg;
 
+	for (i = 1; i < threadNum; i++) {
+		strcat(whitespace, "                ");
+	}
+
+	i = 0;
 	while (timeout == 0) {
-		printf("thread %d: %d\n", threadNum, i++);
+		printf("%sthread %d: %d\n", whitespace, threadNum, i++);
 	}
 
 	return NULL;
@@ -33,6 +37,7 @@ void *threadFunc(void *arg)
 int main(void) {
 
 	int numThreads = 0;
+	int threadNum = 0;
 	int i = 0;
 	pthread_t workerThread, timerThread;	// this is our thread identifier
 
@@ -46,7 +51,7 @@ int main(void) {
 	seconds = seconds * 1000000;
 
 	/* Create timer thread */
-	pthread_create(&timerThread,NULL,timerFunc, NULL);
+	pthread_create(&timerThread, NULL, timerFunc, NULL);
 
 	for (i = 0; i < numThreads; i++) {
 		pthread_create(&workerThread, NULL, threadFunc, &i);
