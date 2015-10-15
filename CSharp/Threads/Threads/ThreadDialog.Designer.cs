@@ -80,6 +80,16 @@
             // threadsSpinner
             // 
             this.threadsSpinner.Location = new System.Drawing.Point(199, 44);
+            this.threadsSpinner.Maximum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.threadsSpinner.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.threadsSpinner.Name = "threadsSpinner";
             this.threadsSpinner.Size = new System.Drawing.Size(120, 22);
             this.threadsSpinner.TabIndex = 4;

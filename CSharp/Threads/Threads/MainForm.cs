@@ -18,6 +18,7 @@ namespace Threads
         private int seconds;
         private static bool timeout;
         private RichTextBox[] boxes;
+        public delegate void addItemHandler(int index, int count);
 
         public MainForm()
         {
@@ -26,13 +27,24 @@ namespace Threads
             boxes = new RichTextBox[] { threadBox1, threadBox2, threadBox3, threadBox4, threadBox5, threadBox6 };
         }
 
+        private void SetText(int index, int count)
+        {
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            boxes[index].Text += count + "\n";
+            boxes[index].SelectionStart = boxes[index].Text.Length;
+            boxes[index].ScrollToCaret();
+            
+        }
+
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Dispatcher disp = Dispatcher.CurrentDispatcher;
             Close();
         }
 
-        private async void startThreadsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void startThreadsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ThreadDialog dialog = new ThreadDialog();
 
@@ -41,66 +53,56 @@ namespace Threads
                 numThreads = dialog.NumThreads;
                 seconds = dialog.Seconds;
 
-                for (int i = 0; i < numThreads; i++)
+                foreach (var i in boxes)
                 {
-                    startWorkerAsync(i);
+                    i.Clear();
                 }
 
-                String str = await timerTaskAsync();
+                startTimer();
+
+                for (int i = 1; i < numThreads; i++)
+                {
+                    int temp = i;
+                    Thread thread = new Thread(() => this.startThreads(temp));
+                    thread.Start();
+                }
+
+                
+
             }
         }
 
-        private Task startWorkerAsync(int i)
-        {
-            boxes[i].Text = "";
-            return Task.Run(() => startWorker(i));
-        }
-
-        private void startWorker(int i)
+        private void startThreads(int i)
         {
             int count = 0;
 
             while (!timeout)
             {
-                //Dispatcher.CurrentDispatcher.Invoke((Action)delegate () {
-                //    boxes[i].Text = count.ToString();
-                //});
-                /*
-                this.Dispatcher.Invoke((Action)(() => {
-                    statusLabel.Content = e;
-                }));
-                */
-                /*
-                this.Invoke((MethodInvoker)delegate
-                {
-                    boxes[i].Text += count.ToString() + "\n";
-                });
-                */
-
-                Dispatcher.CurrentDispatcher.InvokeAsync((Action)(() =>
-                {
-                    boxes[i].Text += count.ToString() + "\n";
-                }));
-
+                //SetText(i, count);
+                this.Invoke(new addItemHandler(SetText), new object[] { i, count });
                 count++;
             }
-            
-            this.Invoke((MethodInvoker)delegate
+        }
+
+        void startTimer()
+        {
+            Task.Run(() =>
             {
-                boxes[i].Text = DateTime.Now.ToString("h:mm:ss tt");
+                timeout = false;
+                Thread.Sleep(seconds * 1000);
+                timeout = true;
+
+                this.Invoke((MethodInvoker)delegate
+                {
+                    for (int i = 0; i < numThreads; i++)
+                    {
+                        boxes[i].Text += DateTime.Now.ToString("h:mm:ss tt");
+                    }
+                });
+
+                
             });
-        }
 
-        Task<String> timerTaskAsync()
-        {
-            return Task.Run(() => timerTask());
-        }
-
-        String timerTask()
-        {
-            Thread.Sleep(seconds * 1000);
-            timeout = true;
-            return DateTime.Now.ToString("h:mm:ss tt");
         }
     }
 }
