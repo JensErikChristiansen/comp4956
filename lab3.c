@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <string.h>
 
 int timeout = 0;
 int seconds = 0;
@@ -10,7 +11,7 @@ void *timerFunc(void *arg) {
 	usleep(seconds);
 
 	timeout = 1;
-
+	
 	return NULL;
 }
 
@@ -20,7 +21,6 @@ void *threadFunc(void *arg)
 	int threadNum = *(int*)arg;
 	int i = 0;
 	char whitespace[80];
-
 
 	for (i = 1; i < threadNum; i++) {
 		strcat(whitespace, "                ");
@@ -37,12 +37,14 @@ void *threadFunc(void *arg)
 int main(void) {
 
 	int numThreads = 0;
-	int threadNum = 0;
 	int i = 0;
 	pthread_t workerThread, timerThread;	// this is our thread identifier
 
-	printf("Enter number of threads: ");
-	scanf("%d", &numThreads);
+	do {
+		printf("Enter number of threads (limit 6): ");
+		scanf("%d", &numThreads);
+	} while (numThreads > 6);
+
 	printf("Enter number of seconds: ");
 	scanf("%d", &seconds);
 
