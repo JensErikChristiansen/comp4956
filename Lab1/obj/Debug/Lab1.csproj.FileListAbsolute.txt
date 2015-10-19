@@ -1,0 +1,10 @@
+C:\Users\Jens\Desktop\4956 System Programming\lab1\Lab1\Lab1\bin\Debug\Lab1.exe.config
+C:\Users\Jens\Desktop\4956 System Programming\lab1\Lab1\Lab1\bin\Debug\Lab1.exe
+C:\Users\Jens\Desktop\4956 System Programming\lab1\Lab1\Lab1\bin\Debug\Lab1.pdb
+C:\Users\Jens\Desktop\4956 System Programming\lab1\Lab1\Lab1\obj\Debug\Lab1.csprojResolveAssemblyReference.cache
+C:\Users\Jens\Desktop\4956 System Programming\lab1\Lab1\Lab1\obj\Debug\Lab1.formLab1.resources
+C:\Users\Jens\Desktop\4956 System Programming\lab1\Lab1\Lab1\obj\Debug\Lab1.Properties.Resources.resources
+C:\Users\Jens\Desktop\4956 System Programming\lab1\Lab1\Lab1\obj\Debug\Lab1.csproj.GenerateResource.Cache
+C:\Users\Jens\Desktop\4956 System Programming\lab1\Lab1\Lab1\obj\Debug\Lab1.exe
+C:\Users\Jens\Desktop\4956 System Programming\lab1\Lab1\Lab1\obj\Debug\Lab1.pdb
+C:\Users\Jens\Desktop\4956 System Programming\lab1\Lab1\Lab1\obj\Debug\Lab1.RegisterDialog.resources
