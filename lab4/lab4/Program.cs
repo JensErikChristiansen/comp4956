@@ -9,34 +9,82 @@ namespace lab4
 {
     class Monitors
     {
-        private int producerRate = 1000;
-        private int consumerRate = 2000;
-        private int data = 0;
-        private int qSize = 5;
+        private int producerRate;
+        private int consumerRate;
+        private volatile int data = 0;
+        private int qSize;
         private object mutex = new object();
+        private object occupiedSpace = new object();
+        private object emptySpace = new object();
 
-        Queue<int> queue;
+        Queue<int> queue = new Queue<int>();
 
-        public Monitors()
+        public Monitors(int userBufferSize, int userProducerSleepTime, int userConsumerSleepTime)
         {
-            queue = new Queue<int>();
+            qSize = userBufferSize;
+            producerRate = userProducerSleepTime * 100;
+            consumerRate = userConsumerSleepTime * 100;
+
+            Thread producerThread = new Thread(Produce);
+            Thread consumerThread = new Thread(Consume);
+            producerThread.Start();
+            consumerThread.Start();
+            producerThread.Join();
+            consumerThread.Join();
         }
         static void Main(string[] args)
         {
+            int userBufferSize, userProducerSleepTime, userConsumerSleepTime;
+            do
+            {
+                Console.Write("Enter a buffer size:");
+            } while (!int.TryParse(Console.ReadLine(), out userBufferSize));
 
+            do
+            {
+                Console.Write("Enter a time to sleep for the producer:");
+            } while (!int.TryParse(Console.ReadLine(), out userProducerSleepTime));
+
+            do
+            {
+                Console.Write("Enter a time to sleep for the consumer:");
+            } while (!int.TryParse(Console.ReadLine(), out userConsumerSleepTime));
+
+            new Monitors(userBufferSize, userProducerSleepTime, userConsumerSleepTime);
         }
+
 
         private void Produce()
         {
             while (true)
             {
-                Thread.Sleep(producerRate);
-                lock (queue) {
-                    if (queue.Count < qSize)
+                if (queue.Count < qSize)
+                {
+                    Thread.Sleep(producerRate); // simulate creation of data
+                    
+                    lock (mutex)
                     {
-                        queue.Enqueue(++data); 
+                        queue.Enqueue(++data);
+                        Console.WriteLine("Producer writes " + data);
+                        Console.WriteLine("Queue size: " + queue.Count);
+                    }
+                    
+
+                    lock (occupiedSpace)
+                    {
+                        Monitor.Pulse(occupiedSpace);
+                    }
+
+                } else
+                {
+                    lock (emptySpace)
+                    {
+                        Monitor.Wait(emptySpace);
                     }
                 }
+
+                
+                
             }
         }
 
@@ -44,17 +92,29 @@ namespace lab4
         {
             while (true)
             {
+                lock (occupiedSpace)
+                {
+                    Monitor.Wait(occupiedSpace);
+                }
+
                 Thread.Sleep(consumerRate);
 
-                lock(mutex)
+                int temp;
+
+                lock (mutex)
                 {
-                    if (queue.Count > 0)
-                    {
-                        queue.Dequeue();
-                    }
+                    temp = queue.Dequeue();
+                    Console.WriteLine("Consumer reads " + temp);
+                    Console.WriteLine("Queue size: " + queue.Count);
+                }
+
+
+
+                lock (emptySpace)
+                {
+                    Monitor.Pulse(emptySpace);
                 }
                 
-
             }
         }
 
