@@ -34,19 +34,19 @@ namespace lab4
                 Console.Write("Enter a time to sleep for the consumer:");
             } while (!int.TryParse(Console.ReadLine(), out userConsumerSleepTime));
 
-            Producer p1 = new Producer(userProducerSleepTime, "chef carl");
-            Consumer c1 = new Consumer(userConsumerSleepTime, "Sally");
-            Producer p2 = new Producer(userProducerSleepTime, "chef dan");
-            Consumer c2 = new Consumer(3, "John");
+            Producer p1 = new Producer(userProducerSleepTime, "Producer");
+            Consumer c1 = new Consumer(userConsumerSleepTime, "Consumer");
+            //Producer p2 = new Producer(userProducerSleepTime, "chef dan");
+            //Consumer c2 = new Consumer(3, "John");
 
             Thread producerThread1 = new Thread(p1.Produce);
             Thread consumerThread1 = new Thread(c1.Consume);
-            Thread producerThread2 = new Thread(p2.Produce);
-            Thread consumerThread2 = new Thread(c2.Consume);
+            //Thread producerThread2 = new Thread(p2.Produce);
+            //Thread consumerThread2 = new Thread(c2.Consume);
             producerThread1.Start();
             consumerThread1.Start();
-            producerThread2.Start();
-            consumerThread2.Start();
+            //producerThread2.Start();
+            //consumerThread2.Start();
         }
 
 
